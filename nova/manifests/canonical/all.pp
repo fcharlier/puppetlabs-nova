@@ -77,4 +77,13 @@ class nova::canonical::all(
   nova::manage::project { $project_name:
     owner => $admin_user,
   }
+
+  # TODO: Move these to class parameters
+  $network="10.0.0.0"
+  $available_ips="256"
+  nova::manage::network { "${project_name}-net-${network}":
+    network => $network,
+    available_ips => $available_ips,
+    require => Nova::Manage::Project[$project_name],
+  }
 }
