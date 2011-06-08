@@ -1,15 +1,11 @@
 Puppet::Type.newtype(:nova_network) do
 
   @doc = "Manage creation/deletion of nova networks.  During creation, network 
-          CIDR and subnet will be calculated automatically"
+          CIDR and netmask will be calculated automatically"
 
   ensurable
 
-  newparam(:name) do
-    desc "network name."
-  end
-
-  newparam(:network) do
+  newparam(:network, :namevar => true) do
     desc "Network (ie, 192.168.1.0)"
     newvalues(/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.0$/)
   end
