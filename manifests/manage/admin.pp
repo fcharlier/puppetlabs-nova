@@ -4,8 +4,7 @@ define nova::manage::admin {
   Exec<| title == 'initial-db-sync' |> -> Nova_admin[$name]
 
   nova_admin{ $name:
-    ensure => present,
+    ensure   => present,
     provider => 'nova_manage',
-    notify => Exec["nova-db-sync"],
   }
 }

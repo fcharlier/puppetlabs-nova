@@ -1,5 +1,4 @@
 #
-# TODO - this is currently hardcoded to be a xenserver
 class nova::controller(
   $db_password,
   $db_name = 'nova',
@@ -19,6 +18,9 @@ class nova::controller(
   $flat_network_bridge_netmask  = '255.255.255.0',
 
   $network_manager = undef,
+  $multi_host_networking = false,
+  $vlan_interface = 'eth0',
+  $vlan_start = 1000,
   $nova_network = '11.0.0.0/24',
   $floating_network = '10.128.0.0/24',
   $available_ips = '256',
@@ -36,7 +38,6 @@ class nova::controller(
   $lock_path = undef
 ) {
 
-
   class { "nova":
     verbose             => $verbose,
     sql_connection      => "mysql://${db_user}:${db_password}@${db_host}/${db_name}",
@@ -51,17 +52,11 @@ class nova::controller(
     rabbit_virtual_host => $rabbit_virtual_host,
     lock_path           => $lock_path,
     network_manager     => $network_manager,
+    flat_network_bridge   => $flat_network_bridge,
+    multi_host_networking => $multi_host_networking,
   }
 
   class { "nova::api": enabled => true }
-
-  class { "nova::network::flat":
-    enabled                     => true,
-    flat_network_bridge         => $flat_network_bridge,
-    flat_network_bridge_ip      => $flat_network_bridge_ip,
-    flat_network_bridge_netmask => $flat_network_bridge_netmask,
-    configure_bridge            => false,
-  }
 
   class { "nova::objectstore":
     enabled => true,
@@ -73,6 +68,38 @@ class nova::controller(
 
   class { "nova::volume":
     enabled => true,
+  }
+
+  if ! $multi_host_networking {
+    case $network_manager {
+      'nova.network.manager.FlatManager': {
+        class { "nova::network::flat":
+          enabled                     => true,
+          flat_network_bridge         => $flat_network_bridge,
+          flat_network_bridge_ip      => $flat_network_bridge_ip,
+          flat_network_bridge_netmask => $flat_network_bridge_netmask,
+          configure_bridge            => false,
+        }
+      }
+      'nova.network.manager.FlatDHCPManager': {
+        class { "nova::network::flatdhcp":
+          enabled                     => true,
+          flat_network_bridge         => $flat_network_bridge,
+          flat_network_bridge_ip      => $flat_network_bridge_ip,
+          flat_network_bridge_netmask => $flat_network_bridge_netmask,
+          configure_bridge            => false,
+        }
+      }
+      'nova.network.manager.VlanManager': {
+        class { "nova::network::vlan":
+          enabled        => true,
+          vlan_interface => $vlan_interface,
+          vlan_start     => $vlan_start,
+        }
+      }
+      default: {
+      }
+    }
   }
 
   class { "nova::scheduler": enabled => true }

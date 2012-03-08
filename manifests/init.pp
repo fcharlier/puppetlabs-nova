@@ -16,7 +16,10 @@ class nova(
   $rabbit_userid='guest',
   $rabbit_virtual_host='/',
   $network_manager = 'nova.network.manager.FlatManager',
+  $multi_host_networking = false,
   $flat_network_bridge = 'br100',
+  $vlan_interface = 'eth1',
+  $vlan_start = 1000,
   $service_down_time = 60,
   $logdir = '/var/log/nova',
   $state_path = '/var/lib/nova',
@@ -57,7 +60,6 @@ class nova(
 
   package { "python-nova":
     ensure  => present,
-    require => Package["python-greenlet"]
   }
 
   package { 'nova-common':
@@ -105,6 +107,8 @@ class nova(
     Nova_config<<| tag == $cluster_id and value == 'sql_connection' |>>
   }
 
+  if $multi_host_networking { nova_config { 'multi_host': value => 'true' } }
+
   nova_config {
     'verbose': value => $verbose;
     'nodaemon': value => $nodaemon;
@@ -133,10 +137,24 @@ class nova(
     refreshonly => true,
   }
 
-  if $network_manager == 'nova.network.manager.FlatManager' {
-    nova_config {
-      'flat_network_bridge': value => $flat_network_bridge
+  case $network_manager {
+    'nova.network.manager.FlatManager': {
+      nova_config {
+        'flat_network_bridge': value => $flat_network_bridge;
+      }
     }
+    'nova.network.manager.FlatDHCPManager': {
+      nova_config {
+        'flat_network_bridge': value => $flat_network_bridge;
+      }
+    }
+    'nova.network.manager.VlanManager': {
+      nova_config {
+        'vlan_interface': value => $vlan_interface;
+        'vlan_start': value => $vlan_start;
+      }
+    }
+    default: { fail('The specified network manager is not supported') }
   }
 
   if $network_manager == 'nova.network.manager.FlatDHCPManager' {

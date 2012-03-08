@@ -7,13 +7,8 @@ describe 'nova' do
 
   describe 'with default parameters' do
     it { should contain_package('python').with_ensure('present') }
-    it { should contain_package('python-greenlet').with(
-      'ensure'  => 'present',
-      'require' => 'Package[python]'
-    )}
     it { should contain_package('python-nova').with(
-      'ensure'  => 'present',
-      'require' => 'Package[python-greenlet]'
+      'ensure'  => 'present'
     )}
 
     it { should contain_group('nova').with(
@@ -78,24 +73,27 @@ describe 'nova' do
     it { should contain_nova_config('use_deprecated_auth').with_value('true') }
     it { should contain_nova_config('root_helper').with_value('sudo') }
 
+    it { should_not contain_nova_config('multi_host') }
+
     describe 'with parameters supplied' do
 
       let :params do
         {
-          'sql_connection'      => 'mysql://user:pass@db/db',
-          'verbose'             => true,
-          'nodaemon'            => true,
-          'logdir'              => '/var/log/nova2',
-          'image_service'       => 'nova.image.glance.GlanceImageService',
-          'allow_admin_api'     => true,
-          'rabbit_host'         => 'rabbit',
-          'rabbit_userid'      => 'rabbit_user',
-          'rabbit_port'         => '5672',
-          'rabbit_password'     => 'password',
-          'lock_path'           => '/var/locky/path',
-          'state_path'          => '/var/lib/nova2',
-          'service_down_time'   => '120',
-          'network_manager'     => 'nova.network.manager.FlatDHCPManager'
+          'sql_connection'        => 'mysql://user:pass@db/db',
+          'verbose'               => true,
+          'nodaemon'              => true,
+          'logdir'                => '/var/log/nova2',
+          'image_service'         => 'nova.image.glance.GlanceImageService',
+          'allow_admin_api'       => true,
+          'rabbit_host'           => 'rabbit',
+          'rabbit_userid'         => 'rabbit_user',
+          'rabbit_port'           => '5672',
+          'rabbit_password'       => 'password',
+          'lock_path'             => '/var/locky/path',
+          'state_path'            => '/var/lib/nova2',
+          'service_down_time'     => '120',
+          'network_manager'       => 'nova.network.manager.FlatDHCPManager',
+          'multi_host_networking' => 'true'
         }
       end
 
@@ -125,6 +123,8 @@ describe 'nova' do
       it { should contain_nova_config('dhcpbridge_flagfile').with_value('/etc/nova/nova.conf') }
 
       it { should contain_nova_config('use_deprecated_auth').with_value(true) }
+
+      it { should contain_nova_config('multi_host').with_value('true') }
 
     end
 
