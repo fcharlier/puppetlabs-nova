@@ -1,6 +1,6 @@
 class nova(
   # this is how to query all resources from our clutser
-  $nova_cluster_id='localcluster',
+  $cluster_id='localcluster',
   $sql_connection = false,
   $image_service = 'nova.image.local.LocalImageService',
   # these glance params should be optional

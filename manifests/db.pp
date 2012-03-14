@@ -4,7 +4,7 @@ class nova::db(
   $user = 'nova',
   $host = '127.0.0.1',
   $allowed_hosts = undef,
-  $cluster_id = 'localzone'
+  $cluster_id = 'localcluster'
 ) {
 
   # Create the db instance before nova-common if its installed
@@ -15,7 +15,7 @@ class nova::db(
   # TODO - worry about the security implications
   @@nova_config { 'database_url':
     value => "mysql://${user}:${password}@${host}/${dbname}",
-    tag   => $zone,
+    tag   => $cluster_id,
   }
 
   mysql::db { $dbname:
