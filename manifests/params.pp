@@ -38,15 +38,12 @@ class nova::params {
       $libvirt_package_name     = 'libvirt-bin'
       $libvirt_service_name     = 'libvirt-bin'
       case $::operatingsystem {
-        'ubuntu': {
-          # some of the services need to be started form the special upstart provider
-          $special_service_provider = 'upstart'
-        }
-        'debian': {
+        'Debian': {
           $special_service_provider = 'debian'
         }
         default: {
-          fail("Unsupported operatingsystem: ${::operatingsystem}, module ${module_name} only support operatingsystem Ubuntu and Debian")
+          # some of the services need to be started form the special upstart provider
+          $special_service_provider = 'upstart'
         }
       }
       # debian specific nova config
