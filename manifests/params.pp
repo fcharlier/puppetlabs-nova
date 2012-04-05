@@ -37,8 +37,18 @@ class nova::params {
       $scheduler_service_name   = 'nova-scheduler'
       $libvirt_package_name     = 'libvirt-bin'
       $libvirt_service_name     = 'libvirt-bin'
-      # some of the services need to be started form the special upstart provider
-      $special_service_provider = 'upstart'
+      case $::operatingsystem {
+        'ubuntu': {
+          # some of the services need to be started form the special upstart provider
+          $special_service_provider = 'upstart'
+        }
+        'debian': {
+          $special_service_provider = 'debian'
+        }
+        default: {
+          fail("Unsupported operatingsystem: ${::operatingsystem}, module ${module_name} only support operatingsystem Ubuntu and Debian")
+        }
+      }
       # debian specific nova config
       $root_helper              = 'sudo'
     }
