@@ -42,4 +42,17 @@ describe 'nova::compute' do
     )}
     it { should_not contain_package('nova-compute') }
   end
+
+  describe 'multi host networking' do
+    let :facts do
+      { :osfamily => 'Debian' }
+    end
+    let :pre_condition do
+      'class {"nova":  multi_host_networking => true }'
+    end
+    it { should include_class("nova::api") }
+    it { should include_class("nova::network") }
+    it { should contain_nova_config('enabled_apis').with_value('metadata') }
+  end
+
 end

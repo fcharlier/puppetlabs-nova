@@ -28,4 +28,12 @@ class nova::compute(
     require => Package[$::nova::params::common_package_name],
     before  => Exec['networking-refresh'],
   }
+
+  if ($::nova::multi_host_networking) {
+    nova_config { 'enabled_apis': value => 'metadata' }
+
+    class { "nova::api": enabled => true }
+
+    class { "nova::network": enabled => true }
+  }
 }
