@@ -92,9 +92,13 @@ node compute {
   }
   class { 'nova::compute::libvirt':
     libvirt_type                => 'qemu',
-    flat_network_bridge         => 'br100',
-    flat_network_bridge_ip      => '11.0.0.1',
-    flat_network_bridge_netmask => '255.255.255.0',
+  }
+  class { "nova::network::flat":
+    enabled                     => true,
+    flat_network_bridge         => $flat_network_bridge,
+    flat_network_bridge_ip      => $flat_network_bridge_ip,
+    flat_network_bridge_netmask => $flat_network_bridge_netmask,
+    configure_bridge            => false,
   }
   class { "nova":
     verbose             => $verbose,

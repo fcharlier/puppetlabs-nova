@@ -63,9 +63,6 @@ class nova::all(
   }
   class { 'nova::compute::libvirt':
     libvirt_type                => $libvirt_type,
-    flat_network_bridge         => $flat_network_bridge,
-    flat_network_bridge_ip      => $flat_network_bridge_ip,
-    flat_network_bridge_netmask => $flat_network_bridge_netmask,
   }
 
   class { "nova::network::flat":
