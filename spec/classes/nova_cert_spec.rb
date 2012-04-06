@@ -11,7 +11,7 @@ describe 'nova::cert' do
       { :osfamily => 'Debian' }
     end
     it { should contain_service('nova-cert').with(
-      'name'    => 'openstack-nova-cert',
+      'name'    => 'nova-cert',
       'ensure'  => 'stopped',
       'enable'  => false
     )}
@@ -20,7 +20,7 @@ describe 'nova::cert' do
         {:enabled => true}
       end
     it { should contain_service('nova-cert').with(
-      'name'    => 'openstack-nova-cert',
+      'name'    => 'nova-cert',
       'ensure'  => 'running',
       'enable'  => true
     )}

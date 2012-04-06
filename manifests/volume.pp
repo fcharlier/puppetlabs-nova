@@ -17,16 +17,25 @@ class nova::volume( $enabled=false ) {
   }
 
   service { "nova-volume":
-    name => 'openstack-nova-volume',
-    ensure  => $service_ensure,
-    enable  => $enabled,
-    require => Package["openstack-nova"],
+    name       => $::nova::params::volume_service_name,
+    ensure     => $service_ensure,
+    enable     => $enabled,
+    require    => Package[$::nova::params::common_package_name],
     #subscribe => File["/etc/nova/nova.conf"]
+  }
+
+  if($::nova::params::volume_package_name != undef) {
+    package { 'nova-volume': 
+      name   => $::nova::params::volume_package_name,
+      ensure => present,
+      notify => Service['nova-volume'],
+      before => Service['tgtd'],
+    }
   }
 
   service {'tgtd':
     ensure  => $service_ensure,
     enable  => $enabled,
-    require => Package["openstack-nova"],
+    require => Package[$::nova::params::common_package_name],
   }
 }
