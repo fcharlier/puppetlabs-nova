@@ -116,7 +116,9 @@ class nova::controller(
   }
 
   nova::manage::floating { "${project_name}-floating-${floating_network}":
-    network       => $floating_network,
-    require       => Nova::Manage::Project[$project_name],
+    network   => $floating_network,
+    label     => 'nova',
+    interface => 'eth1',
+    require   => Nova::Manage::Project[$project_name],
   }
 }
