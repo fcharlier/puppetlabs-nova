@@ -33,7 +33,5 @@ class nova::compute(
     nova_config { 'enabled_apis': value => 'metadata' }
 
     class { "nova::api": enabled => true }
-
-    class { "nova::network": enabled => true }
   }
 }
