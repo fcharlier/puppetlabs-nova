@@ -1,10 +1,12 @@
 class nova::compute::multi_host(
   $enabled = false
-) inherits nova::compute {
+) {
 
   nova_config { 'enabled_apis': value => 'metadata' }
 
   class { 'nova::api': enabled => $enabled }
+
+  class { 'nova::compute': enabled => $enabled }
 
   case $nova::network_manager {
     'nova.network.manager.FlatManager': {
