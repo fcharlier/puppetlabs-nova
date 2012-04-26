@@ -177,6 +177,7 @@ class nova(
 
   if $network_manager == 'nova.network.manager.VlanManager' {
     nova_config {
+      'dhcpbridge': value     => "/usr/bin/nova-dhcpbridge";
       'vlan_interface': value => $vlan_interface;
       'vlan_start': value     => $vlan_start;
     }
