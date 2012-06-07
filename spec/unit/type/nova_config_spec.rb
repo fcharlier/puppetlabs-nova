@@ -20,7 +20,7 @@ describe 'Puppet::Type.type(:nova_config)' do
     @nova_config[:value] = 'bar'
     @nova_config[:value].should == 'bar'
   end
-  it 'should not accept a value with whitespace' do
+  it 'should accept a value with whitespace' do
     @nova_config[:value] = 'b ar'
     @nova_config[:value].should == 'b ar'
   end
