@@ -20,8 +20,9 @@ describe 'Puppet::Type.type(:nova_config)' do
     @nova_config[:value] = 'bar'
     @nova_config[:value].should == 'bar'
   end
-  it 'should not accept a value with whitespace' do
-    expect { @nova_config[:value] = 'b ar' }.should raise_error(Puppet::Error, /Invalid value/)
+  it 'should accept a value with whitespace' do
+    @nova_config[:value] = 'b ar'
+    @nova_config[:value].should == 'b ar'
   end
   it 'should accept valid ensure values' do
     @nova_config[:ensure] = :present
