@@ -8,7 +8,8 @@ class nova::rabbitmq(
   $port           = '5672',
   $virtual_host   = '/',
   $enabled        = true,
-  $manage_service = true
+  $manage_service = true,
+  $env_config     = 'UNSET'
 ) {
 
   # only configure nova after the queue is up
@@ -43,6 +44,7 @@ class nova::rabbitmq(
     manage_service    => $manage_service,
     port              => $port,
     delete_guest_user => $delete_guest_user,
+    env_config        => $env_config 
   }
 
   if ($enabled) {
