@@ -24,11 +24,15 @@ describe 'Puppet::Type.type(:nova_config)' do
   end
   it 'should accept a valid value' do
     @nova_config[:value] = 'bar'
-    @nova_config[:value].should == 'bar'
+    @nova_config[:value].should == ['bar']
+  end
+  it 'should accept a multi-value value' do
+    @nova_config[:value] = ['bar', 'baz']
+    @nova_config[:value].should == ['bar', 'baz']
   end
   it 'should not accept a value with whitespace' do
     @nova_config[:value] = 'b ar'
-    @nova_config[:value].should == 'b ar'
+    @nova_config[:value].should == ['b ar']
   end
   it 'should accept valid ensure values' do
     @nova_config[:ensure] = :present
