@@ -21,18 +21,20 @@ Puppet::Type.type(:nova_config).provide(
       Puppet.debug("nova config line:#{hash[:line]} has been parsed")
       if hash[:line] =~ /^\s*(\S+?)\s*=\s*([\S ]+?)\s*$/
         hash[:name]=$1
-        hash[:value]=$2
+        hash[:value]=[$2]
       elsif hash[:line] =~ /^\s*(\S+)\s*$/
         hash[:name]=$1
-        hash[:value]=false
+        hash[:value]=[false]
       else
         raise Puppet::Error, "Invalid line: #{hash[:line]}"
       end
     }
 
   def self.to_line(hash)
-    if hash[:name] and hash[:value]
-      "#{hash[:name]}=#{hash[:value]}"
+    if hash[:name]
+      hash[:value].collect do |v|
+        "#{hash[:name]}=#{v}"
+      end
     end
   end
 
