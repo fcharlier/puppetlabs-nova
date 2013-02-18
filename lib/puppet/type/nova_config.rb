@@ -10,7 +10,7 @@ Puppet::Type.newtype(:nova_config) do
     newvalues(/^\S+$/)
   end
 
-  newproperty(:value, :array_matching => :all) do
+  newproperty(:value) do
     munge do |value|
       value.to_s
     end
